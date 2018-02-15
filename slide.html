@@ -1,0 +1,150 @@
+<html>
+  <head>
+    <style>
+      .wrapper {
+        position: relative;
+        overflow: hidden;
+        width: 100px;
+        height: 100px;
+        border: 1px solid black;
+        margin: 50px auto;
+      }
+
+      .slide {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        display: inline-block;
+      }
+
+      .blue { background: blue; }
+      .red { background: red; }
+      .green { background: green;}
+      .orange { background: orange; }
+      .purple { background: purple; }
+
+      nav {
+        width: 200px;
+        text-align: center;
+        margin: 20px auto;
+      }
+    </style> 
+  </head>
+  <body>
+    <div id="app">
+      <carousel>
+        <div class="slide blue"></div>
+        <div class="slide red"></div>
+        <div class="slide green"></div>
+        <div class="slide orange"></div>
+        <div class="slide purple"></div>
+      </carousel>
+    </div>
+
+
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.5.13/dist/vue.js"></script>
+    <script>
+      Vue.component('carousel', {
+        data() {
+          return {
+            slides: [],
+            currentSlide: 0,
+            slideWidth: 100
+          }
+        },
+        template: `
+          <div>
+            <p>{{ currentSlide }}</p>
+            <div class="wrapper">
+              <slot></slot>
+            </div>
+            <nav>
+              <button>prev</button>
+              <button @click="next()">next</button>
+            </nav>
+          </div>
+        `,
+        methods: {
+          next() {
+            let left
+
+            (this.currentSlide !== this.slides.length - 1) ?
+              this.currentSlide = this.currentSlide + 1 :
+              this.currentSlide = 0
+
+              this.slides.forEach((slide, index, array) => {
+                if (this.currentSlide === 0) {
+                  if (index === 0) {
+                    slide.elm.style.left = '0'
+                  } else if (index === array.length - 1) {
+                    left = -this.slideWidth
+                  } else {
+                    left = index * this.slideWidth
+                  }
+                } else {
+                  if (index === this.currentSlide - 1) {
+                    left = -1 * this.slideWidth
+                  } else {
+                    if (index === 0) {
+                      left = (array.length - this.currentSlide) * this.slideWidth
+                    } else {
+                      if (this.currentSlide > index) {
+                        left = (this.currentSlide - index) * this.slideWidth
+                      } else {
+                        left = (index - this.currentSlide) * this.slideWidth
+                      }
+                    }
+                  }
+                }
+
+                if (index === this.currentSlide || index === this.currentSlide - 1) {
+                  slide.elm.style.transition = '.3s'
+                } else {
+                  if (this.currentSlide === 0 && index === array.length - 1) {
+                    slide.elm.style.transition = '.3s'
+                  } else {
+                    slide.elm.style.transition = null
+                  }
+                }
+                slide.elm.style.left = `${left}px`
+              })
+
+          }
+        },
+        mounted() {
+          this.slides = this.$slots.default.filter(slot => {
+            return slot.elm.nodeName !== '#text'
+          })
+
+          this.slides.forEach((slide, index, array) => {
+            let left
+
+            if(index === 0) {
+              slide.elm.style.left = '0'
+            } else if(index === array.length - 1) {
+              left = - this.slideWidth
+            } else {
+              left = index * this.slideWidth
+            }
+            slide.elm.style.left = `${left}px`
+          })
+        }
+      })
+
+      new Vue({
+        el: '#app'
+      })
+
+      function next() {
+        var currentSlide = document.querySelector('.current-slide')
+        var nextSlide = document.querySelector('.next-slide')
+        var prevSlide = document.querySelector('.prev-slide')
+
+
+        currentSlide.className = currentSlide.className.replace('current-slide active', 'prev-slide active')
+        prevSlide.className = prevSlide.className.replace('prev-slide active', 'next-slide')
+        nextSlide.className = nextSlide.className.replace('next-slide', 'current-slide active')
+      }
+    </script>
+  </body>
+</html>
