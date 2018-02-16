@@ -1,0 +1,87 @@
+.wrapper {
+    position: relative;
+    overflow: hidden;
+    width: 100%;
+    border: 1px solid black;
+}
+
+.slide {
+    position: absolute;
+    width: 100%;
+    display: inline-block;
+    text-align: center;
+    font-size: 40px;
+    color: #ffff;
+    background-size: cover;
+    background-repeat: no-repeat;
+}
+
+nav {
+    margin: 20px auto;
+    position: absolute;
+    top: 100px;
+    width: 100%;
+    text-align: center;
+}
+
+.carousel-caption {
+    position: absolute;
+    left: 15%;
+    right: 15%;
+    bottom: 20px;
+    z-index: 10;
+    padding-top: 20px;
+    padding-bottom: 20px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.6);
+}
+
+.content {
+    background: rgba(0, 0, 0, 0.20);
+    padding: 40px;
+    z-index: -1;
+}
+
+.text {
+    margin-left: 20%;
+    margin-right: 20%;
+}
+
+h1 {
+    text-transform: uppercase;
+    font-family: Futura, "Trebuchet MS", Arial, sans-serif;
+    font-size: 40px;
+    letter-spacing: 5px;
+    font-weight: 500;
+    -webkit-font-smoothing: antialiased !important;
+}
+
+.carousel-control.right, .carousel-control.left {
+    top: 47%;
+    background-image: none;
+}
+
+.carousel-control {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    width: 15%;
+    font-size: 20px;
+    color: #fff;
+    text-align: center;
+    text-shadow: 0 1px 2px rgba(0,0,0,.6);
+    opacity: .5;
+    z-index: 100;
+}
+
+.carousel-control.right {
+    right: 0;
+    left: auto;
+    background-repeat: repeat-x;
+}
+
+.carousel-control img {
+    vertical-align: middle;
+}
