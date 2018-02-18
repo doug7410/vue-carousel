@@ -15,6 +15,7 @@ Vue.component('carousel', {
   data() {
     return {
       slides: [],
+      slideElms: [],
       currentSlide: 0,
       slideWidth: 0,
       transition: '.35s ease-out',
@@ -24,35 +25,31 @@ Vue.component('carousel', {
   },
   methods: {
     incrementSlide() {
-      this.currentSlide = (this.currentSlide !== this.lastSlideIndex) ? this.currentSlide + 1 : this.currentSlide = 0
+      this.currentSlide = this.currentlyOnLastSlide ? this.nextSlideIndex : 0
     },
     decrementSlide() {
-      this.currentSlide = (this.currentSlide !== 0) ?  this.currentSlide - 1 : this.lastSlideIndex
+      this.currentSlide = this.currentlyOnFirstSlide ?  this.lastSlideIndex : this.prevSlideIndex
     },
     slidesFirstPosition(slideIndex) {
       return (slideIndex === this.lastSlideIndex) ? -this.slideWidth : slideIndex * this.slideWidth
     },
     slideIsLeftOfWrapper(slideIndex) {
-      return slideIndex === this.currentSlide - 1
+      return slideIndex === this.prevSlideIndex
     },
     positionSlideLeftOfWrapper() {
       return -1 * this.slideWidth
     },
     positionSlides(slideIndex) {
-      if (this.slideIsLeftOfWrapper(slideIndex)) {
-        return this.positionSlideLeftOfWrapper()
-      }
+      if (this.slideIsLeftOfWrapper(slideIndex)) return this.positionSlideLeftOfWrapper()
 
-      if (slideIndex === 0) {
-        return (this.slides.length - this.currentSlide) * this.slideWidth
-      } else {
-        return (this.currentSlide > slideIndex) ?
-          (this.currentSlide - slideIndex) * this.slideWidth
-          : (slideIndex - this.currentSlide) * this.slideWidth
-      }
+      if (slideIndex === 0) return (this.slides.length - this.currentSlide) * this.slideWidth
+
+      return (this.currentSlide > slideIndex) ?
+        (this.currentSlide - slideIndex) * this.slideWidth :
+        (slideIndex - this.currentSlide) * this.slideWidth
     },
     getSlidesLeftPosition(slideIndex) {
-      return (this.slidesAtStartingPosition) ? this.slidesFirstPosition(slideIndex) : this.positionSlides(slideIndex)
+      return this.slidesAtStartingPosition ? this.slidesFirstPosition(slideIndex) : this.positionSlides(slideIndex)
     },
     navigateNext() {
       this.stopAutoPlay()
@@ -65,12 +62,12 @@ Vue.component('carousel', {
     next() {
       this.incrementSlide()
       this.slides.forEach((slide, slideIndex) => {
-        if (slideIndex === this.currentSlide || slideIndex === this.currentSlide - 1) {
-          slide.elm.style.transition = this.transition
+        if (slideIndex === this.currentSlide || slideIndex === this.prevSlideIndex) {
+          slide.style.transition = this.transition
         } else {
-          slide.elm.style.transition = (this.currentSlide === 0 && slideIndex === this.lastSlideIndex) ? this.transition : null
+          slide.style.transition = (this.currentSlide === 0 && slideIndex === this.lastSlideIndex) ? this.transition : null
         }
-        slide.elm.style.left = `${this.getSlidesLeftPosition(slideIndex)}px`
+        slide.style.left = `${this.getSlidesLeftPosition(slideIndex)}px`
       })
 
     },
@@ -78,17 +75,17 @@ Vue.component('carousel', {
       this.decrementSlide()
       this.slides.forEach((slide, slideIndex) => {
         if (slideIndex === this.currentSlide || slideIndex === this.currentSlide + 1) {
-          slide.elm.style.transition = this.transition
+          slide.style.transition = this.transition
         } else {
-          slide.elm.style.transition = (this.currentSlide === this.lastSlideIndex && slideIndex === 0) ? this.transition : null
+          slide.style.transition = (this.currentSlide === this.lastSlideIndex && slideIndex === 0) ? this.transition : null
         }
-        slide.elm.style.left = `${this.getSlidesLeftPosition(slideIndex)}px`
+        slide.style.left = `${this.getSlidesLeftPosition(slideIndex)}px`
       })
     },
     autoStart() {
       this.autoPlayTimer = setInterval(() => {
         this.next()
-      }, 4000)
+      }, 3000)
     },
     stopAutoPlay() {
       if(this.autoPlayTimer) {
@@ -104,27 +101,38 @@ Vue.component('carousel', {
     lastSlideIndex() {
       return this.slides.length - 1
     },
+    nextSlideIndex() {
+      return this.currentSlide + 1
+    },
     prevSlideIndex() {
       return this.currentSlide - 1
+    },
+    currentlyOnFirstSlide() {
+      return this.currentSlide === 0
+    },
+    currentlyOnLastSlide() {
+      return this.currentSlide !== this.lastSlideIndex
     }
   },
   mounted() {
     this.slideWidth = this.$el.offsetWidth
     this.windowHeight = window.innerHeight
-    this.slides = this.$slots.default.filter(slot => slot.elm.nodeName !== '#text')
+    this.slides = this.$slots.default
+      .filter(slot => slot.elm.nodeName !== '#text')
+      .map(slot => slot.elm)
 
     this.slides.forEach((slide, index) => {
       let left = this.slidesFirstPosition(index)
-      slide.elm.style.left = `${left}px`
-      slide.elm.style.height = `${window.innerHeight}px`
+      slide.style.left = `${left}px`
+      slide.style.height = `${window.innerHeight}px`
     })
 
     window.addEventListener('resize', () => {
       this.slideWidth = window.innerWidth
       this.slides.forEach(slide => {
         // TODO need to throttle this
-        slide.elm.style.height = `${window.innerHeight}px`
-        slide.elm.style.width = `${window.innerWidth}px`
+        slide.style.height = `${window.innerHeight}px`
+        slide.style.width = `${window.innerWidth}px`
       })
     })
 
