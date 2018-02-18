@@ -14,3 +14,4 @@ browser and it works.
 is smaller than the window the slides will size properly
 - Add navigation to a specific slide
 - Add prop for setting slide speed and auto play timer
+- Handle screen resizing better
