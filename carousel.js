@@ -15,7 +15,6 @@ Vue.component('carousel', {
   data() {
     return {
       slides: [],
-      slideElms: [],
       currentSlide: 0,
       slideWidth: 0,
       transition: '.35s ease-out',
