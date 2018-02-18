@@ -5,10 +5,7 @@
   <body>
     <div id="app">
       <carousel>
-        <div class="slide"
-             v-for="image in images"
-             :style="{backgroundImage: 'url(./images/'+ image +')'}"
-        ></div>
+        <div class="slide" v-for="image in images" :style="{backgroundImage: 'url(./images/'+ image +')'}"></div>
       </carousel>
     </div>
 
@@ -18,13 +15,7 @@
       new Vue({
         el: '#app',
         data: {
-          images: [
-            '01_bg.jpg',
-            '02_bg.jpg',
-            '03_bg.jpg',
-            '04_bg.jpg',
-            '05_bg.jpg',
-          ]
+          images: ['01_bg.jpg', '02_bg.jpg', '03_bg.jpg', '04_bg.jpg', '05_bg.jpg']
         }
       })
     </script>
